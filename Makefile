@@ -6,7 +6,7 @@
 #    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/13 20:07:31 by kdumarai          #+#    #+#              #
-#    Updated: 2017/11/14 20:07:04 by kdumarai         ###   ########.fr        #
+#    Updated: 2017/11/15 13:22:33 by kdumarai         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
-$(NAME): $(SRCS)
+$(NAME): get_next_line.c get_next_line.h main.c
 	make -C ../Libft && make clean -C ../Libft
 	clang $(CFLAGS) -I ../Libft -o get_next_line.o -c get_next_line.c
 	clang $(CFLAGS) -I ../Libft -o main.o -c main.c
