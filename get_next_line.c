@@ -6,11 +6,13 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/15 16:10:19 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/20 19:09:05 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <unistd.h>
+#include <stdlib.h>
 
 static t_backup bak;
 
@@ -73,8 +75,9 @@ int				get_next_line(int fd, char **line)
 		*line = ft_strnew(llen);
 		strnjoin_realloc(line, bak.buff, llen);
 		//ft_strdel(&(bak.buff));
-		if (llen != blen)
-			return (1);
+		bak.index = llen;
+		if (!*(bak.buff - 1) || !*(bak.buff))
+			return (0);
 	}
 	while ((rb = read(fd, buff, BUFF_SIZE)) > 0)
 	{
@@ -83,11 +86,7 @@ int				get_next_line(int fd, char **line)
 		llen = ft_strlenline(buff, '\n');
 		blen = ft_strlen(buff);
 		strnjoin_realloc(line, buff, llen);
-		if (llen != blen)
-		{
-			bak.index = llen;
-			return (1);
-		}
+		bak.index = llen;
 	}
-	return (rb);
+	return ((rb < 0) ? -1 : 1);
 }

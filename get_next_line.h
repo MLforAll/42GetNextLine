@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:41:33 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/15 16:11:46 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/20 15:27:43 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <stdio.h>
 
 # include "Libft/libft.h"
-# define BUFF_SIZE	32
+# define BUFF_SIZE	128
 
 typedef struct	s_backup
 {

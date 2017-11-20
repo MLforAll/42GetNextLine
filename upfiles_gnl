@@ -1,8 +1,16 @@
+auteur
 get_next_line.c
 get_next_line.h
 get_next_line.o
 main.c
+main.o
 Makefile
 README.md
+tests/abc.txt
+tests/alnum.txt
+tests/alphabet_nonl.txt
+tests/numbers.txt
+tests/test
+tests/test2lines16.txt
+tests/tests.txt
 upfiles_gnl
-tests.txt
