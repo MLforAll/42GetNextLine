@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/20 19:09:05 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/20 20:18:58 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ int				get_next_line(int fd, char **line)
 	size_t	llen;
 	size_t	blen;
 
+	if (!line)
+		return (-1);
 	if (!bak.buff)
 		*line = ft_strnew(0);
 	else
@@ -73,11 +75,11 @@ int				get_next_line(int fd, char **line)
 		llen = ft_strlenline(bak.buff, '\n');
 		blen = ft_strlen(bak.buff);
 		*line = ft_strnew(llen);
+		if (!*(bak.buff - 1) || !*(bak.buff))
+			return (0);
 		strnjoin_realloc(line, bak.buff, llen);
 		//ft_strdel(&(bak.buff));
 		bak.index = llen;
-		if (!*(bak.buff - 1) || !*(bak.buff))
-			return (0);
 	}
 	while ((rb = read(fd, buff, BUFF_SIZE)) > 0)
 	{

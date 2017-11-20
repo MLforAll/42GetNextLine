@@ -1,9 +1,7 @@
 auteur
 get_next_line.c
 get_next_line.h
-get_next_line.o
 main.c
-main.o
 Makefile
 README.md
 tests/abc.txt

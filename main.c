@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:34:32 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/20 19:11:31 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/20 20:15:36 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,17 @@ int		main(int ac, char **av)
 	ft_putstr_color("=== Starting test program ===\n\n", WHITECLR);
 	gnl_retval = -2;
 	if (ac < 2)
-		return(ft_returnmsg("Specify a file or stdin!\n", 2, 1));
-	if (ft_strcmp(av[1], "stdin"))
-	{
-		if ((fd = open(av[1], O_RDONLY) == -1))
-			return(ft_returnmsg("Err opening the file!\n", 2, 1));
-	}
-	else
 		fd = 0;
+	else
+	{
+		fd = open(av[1], O_RDONLY);
+		if (fd == -1)
+			return (ft_returnmsg("Err opening the file!\n", 2, 1));
+	}
 	while (gnl_retval > 0 || gnl_retval == -2)
 	{
 		gnl_retval = get_next_line(fd, &result);
-		if (result)
-			printf("line: %s | retval = %i\n", result, gnl_retval);
+		printf("line: %s | retval = %i\n", result, gnl_retval);
 	}
 	if (gnl_retval == -2)
 		ft_putendl_color("No line were returned", REDCLR);
