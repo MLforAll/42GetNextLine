@@ -4,9 +4,10 @@ get_next_line.h
 main.c
 Makefile
 README.md
+test_gnl
+tests/4lines.txt
 tests/abc.txt
 tests/alnum.txt
-tests/alphabet_nonl.txt
 tests/numbers.txt
 tests/test
 tests/test2lines16.txt

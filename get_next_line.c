@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/20 20:18:58 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/22 21:02:46 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,19 +76,40 @@ int				get_next_line(int fd, char **line)
 		blen = ft_strlen(bak.buff);
 		*line = ft_strnew(llen);
 		if (!*(bak.buff - 1) || !*(bak.buff))
+		{
+			bak.buff = NULL;
 			return (0);
+		}
 		strnjoin_realloc(line, bak.buff, llen);
 		//ft_strdel(&(bak.buff));
 		bak.index = llen;
+		if (llen < blen)
+		{
+			if (!*(bak.buff + llen + 1))
+				bak.buff = NULL;
+			return (1);
+		}
 	}
 	while ((rb = read(fd, buff, BUFF_SIZE)) > 0)
 	{
 		buff[rb] = '\0';
-		bak.buff = ft_strdup(buff);
 		llen = ft_strlenline(buff, '\n');
 		blen = ft_strlen(buff);
 		strnjoin_realloc(line, buff, llen);
-		bak.index = llen;
+		if (llen == 0)
+			break ;
+		if (llen < blen)
+		{
+			bak.buff = ft_strdup(buff);
+			bak.index = llen;
+			break ;
+		}
 	}
-	return ((rb < 0) ? -1 : 1);
+	if (rb > 0 || bak.buff)
+	{
+		if (!*(bak.buff + llen + 1))
+			bak.buff = NULL;
+		return (1);
+	}
+	return (rb);
 }
