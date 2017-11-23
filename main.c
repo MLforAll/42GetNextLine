@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:34:32 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/22 20:48:16 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/23 13:56:23 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,33 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+static int	how_many_lines_in_str(char *str)
+{
+	int		ret;
+
+	ret = 1;
+	while (*str)
+	{
+		if (*(str++) == '\n')
+			ret++;
+	}
+	return (ret);
+}
+
 int		main(int ac, char **av)
 {
 	int		aci;
 	int		fd;
 	int		gnl_retval;
 	char	*result;
-	int		el_stop;
+	char	*entire_file;
+	int		max;
 
 	ft_putstr_color("=== Starting test program ===\n\n", WHITECLR);
 	aci = 0;
 	while (aci < ac)
 	{
 		gnl_retval = -2;
-		el_stop = 0;
 		if (ac < 2)
 		{
 			ft_putendl("==> STDIN");
@@ -43,16 +56,15 @@ int		main(int ac, char **av)
 			if (fd == -1)
 				ft_putstr_fd("Err opening the file!\n\n", 2);
 		}
-		while (gnl_retval > 0 || gnl_retval == -2)
+		if (!(entire_file = ft_readfd(fd, 128)))
+			return (ft_returnmsg("Unfortunaly, this test won't cut it for this fd!", 2, 1));
+		max = how_many_lines_in_str(entire_file);
+		ft_strdel(&entire_file);
+		lseek(fd, 0, 0);
+		while (max-- + 1)
 		{
 			gnl_retval = get_next_line(fd, &result);
 			printf("line: %s | retval = %i\n", (!*result) ? "(empty)" : result, gnl_retval);
-			el_stop += (!*result);
-			if (el_stop == 10)
-			{
-				ft_putendl_color("INFINITE LOOP!! YOUR GNL IS NOT WORKING PROPERLY!!", REDCLR);
-				break ;
-			}
 		}
 		if (gnl_retval == -2)
 			ft_putendl_color("!! No line were returned !!", REDCLR);

@@ -6,7 +6,7 @@
 #    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/13 20:07:31 by kdumarai          #+#    #+#              #
-#    Updated: 2017/11/15 13:22:33 by kdumarai         ###   ########.fr        #
+#    Updated: 2017/11/23 20:59:18 by kdumarai         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ $(NAME): get_next_line.c get_next_line.h main.c
 	clang -o $(NAME) main.o get_next_line.o -I ../Libft -L ../Libft -lft
 
 clean:
-	rm -rf $(OBJS)
+	rm -rf *.o
 
 fclean: clean
 	rm -f $(NAME)
