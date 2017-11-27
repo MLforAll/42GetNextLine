@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:41:33 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/23 19:05:16 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/27 15:56:25 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 # define GET_NEXT_LINE_H
 
 # include "Libft/libft.h"
-# define BUFF_SIZE	128
+# define BUFF_SIZE	8
 
-typedef struct	s_buff
+typedef struct		s_buff
 {
-	char		buff[BUFF_SIZE + 1];
-}				t_buff;
+	char			buff[BUFF_SIZE + 1];
+	int				fd;
+	struct s_buff	*next;
+}					t_buff;
 
 int				get_next_line(const int fd, char **line);
 
