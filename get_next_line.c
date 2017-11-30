@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/27 16:39:56 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/30 20:19:52 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ static t_buff	*get_buff(t_buff **bufflst, int fd)
 	if (!bufflst || !*bufflst)
 	{
 		*bufflst = (t_buff*)malloc(sizeof(t_buff));
+		ft_bzero((*bufflst)->buff, BUFF_SIZE);
 		(*bufflst)->fd = fd;
 		(*bufflst)->next = NULL;
 		return (*bufflst);
@@ -71,6 +72,7 @@ static t_buff	*get_buff(t_buff **bufflst, int fd)
 		tmp = tmp->next;
 	}
 	tmp->next = (t_buff*)malloc(sizeof(t_buff));
+	ft_bzero(tmp->next->buff, BUFF_SIZE);
 	tmp->next->fd = fd;
 	tmp->next->next = NULL;
 	return (tmp->next);
@@ -102,19 +104,18 @@ int				get_next_line(int fd, char **line)
 	buff = get_buff(&buffs, fd);
 	*line = ft_strnew(0);
 	rbt = 0;
-	blen = 0;
-	llen = 0;
-	while (blen == llen)
+	blen = 1;
+	llen = 1;
+	while (blen == llen && llen != 0 && blen != 0)
 	{
 		rbt += read_to_buff(fd, buff->buff);
 		blen = ft_strlen(buff->buff);
 		llen = (!ft_strchr((const char*)buff->buff, '\n')) ? blen
-			: ft_strchr((const char *)buff->buff, '\n') - buff->buff;
+				: ft_strchr((const char*)buff->buff, '\n') - buff->buff;
 		*line = strnjoin_realloc(*line, buff->buff, llen);
-		if (llen == 0 && blen == 0)
-			break ;
 		shift_array(buff->buff, llen + 1, BUFF_SIZE);
-		rbt++;
+		if (llen != 0 || blen != 0)
+			rbt++;
 	}
 	return ((rbt > 0) ? 1 : rbt);
 }

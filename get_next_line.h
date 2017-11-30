@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:41:33 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/27 15:56:25 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/11/30 20:06:48 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,6 @@ typedef struct		s_buff
 	struct s_buff	*next;
 }					t_buff;
 
-int				get_next_line(const int fd, char **line);
+int					get_next_line(const int fd, char **line);
 
 #endif
