@@ -6,116 +6,80 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/11/30 20:19:52 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/14 19:58:09 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include "get_next_line.h"
 
-static char		*strnjoin_realloc(char *s1, char *s2, size_t n)
+static t_list	*get_buff(t_list **bufflst, int fd)
 {
-	char			*ret;
-	char			*tmp;
-	char			*tmp2;
-	size_t			i;
+	t_list			*tmp;
 
-	i = 0;
-	tmp2 = s1;
-	if (!(tmp = ft_strnew(ft_strlen(s1) + n)))
+	if (!bufflst)
 		return (NULL);
-	ret = tmp;
-	while (*s1)
-		*(tmp++) = *(s1++);
-	while (i++ < n)
-		*(tmp++) = *(s2++);
-	*(tmp) = '\0';
-	free(tmp2);
-	return (ret);
-}
-
-static void		shift_array(char *arr, int shift, int len)
-{
-	int				i;
-
-	i = 0;
-	while (i < shift)
-		arr[i++] = '\0';
-	while (i < len)
-	{
-		arr[i - shift] = arr[i];
-		arr[i] = '\0';
-		i++;
-	}
-}
-
-static t_buff	*get_buff(t_buff **bufflst, int fd)
-{
-	t_buff			*tmp;
-
-	if (!bufflst || !*bufflst)
-	{
-		*bufflst = (t_buff*)malloc(sizeof(t_buff));
-		ft_bzero((*bufflst)->buff, BUFF_SIZE);
-		(*bufflst)->fd = fd;
-		(*bufflst)->next = NULL;
-		return (*bufflst);
-	}
 	tmp = *bufflst;
-	if (tmp->fd == fd)
-		return (tmp);
-	while (tmp->next)
+	while (tmp)
 	{
-		if (tmp->next->fd == fd)
-			return (tmp->next);
+		if (tmp->content_size == (size_t)fd)
+			return (tmp);
 		tmp = tmp->next;
 	}
-	tmp->next = (t_buff*)malloc(sizeof(t_buff));
-	ft_bzero(tmp->next->buff, BUFF_SIZE);
-	tmp->next->fd = fd;
-	tmp->next->next = NULL;
-	return (tmp->next);
+	tmp = *bufflst;
+	if (!(*bufflst = ft_lstnew("", 1)))
+		return (NULL);
+	(*bufflst)->content_size = (size_t)fd;
+	(*bufflst)->next = tmp;
+	return (*bufflst);
 }
 
-static int		read_to_buff(int fd, char *buff)
+static void		read_to_buff(int fd, char **stock)
 {
 	int				rb;
+	char			buff[BUFF_SIZE + 1];
+	char			*tmp;
 
-	rb = 0;
-	if (!*buff)
+	rb = 1;
+	while (rb > 0 && !ft_strchr(*stock, '\n'))
 	{
 		rb = read(fd, buff, BUFF_SIZE);
 		buff[rb] = '\0';
+		tmp = *stock;
+		if (!(*stock = ft_strjoin(*stock, buff)))
+		{
+			free(tmp);
+			return ;
+		}
+		free(tmp);
+
 	}
-	return (rb);
 }
 
 int				get_next_line(int fd, char **line)
 {
-	static	t_buff	*buffs;
-	t_buff			*buff;
-	int				rbt;
-	size_t			llen;
-	size_t			blen;
+	static	t_list	*buffs;
+	t_list			*buff;
+	char			*tmp;
+	int				retval;
+	int				nli;
 
-	if (!line)
+	retval = 0;
+	nli = 0;
+	if (!line || read(fd, NULL, 0) == -1)
 		return (-1);
-	buff = get_buff(&buffs, fd);
-	*line = ft_strnew(0);
-	rbt = 0;
-	blen = 1;
-	llen = 1;
-	while (blen == llen && llen != 0 && blen != 0)
-	{
-		rbt += read_to_buff(fd, buff->buff);
-		blen = ft_strlen(buff->buff);
-		llen = (!ft_strchr((const char*)buff->buff, '\n')) ? blen
-				: ft_strchr((const char*)buff->buff, '\n') - buff->buff;
-		*line = strnjoin_realloc(*line, buff->buff, llen);
-		shift_array(buff->buff, llen + 1, BUFF_SIZE);
-		if (llen != 0 || blen != 0)
-			rbt++;
-	}
-	return ((rbt > 0) ? 1 : rbt);
+	if (!(buff = get_buff(&buffs, fd)))
+		return (-1);
+	read_to_buff(fd, (char**)(&buff->content));
+	while (((char*)(buff->content))[nli]
+			&& ((char*)(buff->content))[nli] != '\n')
+		nli++;
+	retval = (nli > 0 || ((char*)(buff->content))[nli]);
+	*line = ft_strsub(buff->content, 0, nli);
+	tmp = buff->content;
+	buff->content = ft_strsub(buff->content, retval ? nli + 1 : nli, \
+			ft_strlen(buff->content));
+	free(tmp);
+	return (retval);
 }
