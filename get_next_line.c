@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/12/15 16:44:52 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/15 16:48:36 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static int		read_to_buff(int fd, char **stock)
 
 	rbt = ft_strchr(*stock, '\n') == NULL ? 0 : -1;
 	rb = 1;
-	while (rb > 0 && rbt > -1)
+	while (rb > 0 && (rbt == -1 || !ft_strchr(*stock, '\n')))
 	{
 		rb = read(fd, buff, BUFF_SIZE);
 		rbt += rb;
