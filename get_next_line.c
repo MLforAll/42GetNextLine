@@ -6,13 +6,36 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/12/14 19:58:09 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/15 16:44:52 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include "get_next_line.h"
+
+static void		rm_buff(t_list **bufflst, int fd)
+{
+	t_list			*curr;
+	t_list			*prev;
+
+	curr = *bufflst;
+	prev = NULL;
+	while (curr)
+	{
+		if (curr->content_size == (size_t)fd)
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				(*bufflst) = curr->next;
+			ft_strdel(((char**)&curr->content));
+			free(curr);
+		}
+		prev = curr;
+		curr = curr->next;
+	}
+}
 
 static t_list	*get_buff(t_list **bufflst, int fd)
 {
@@ -35,26 +58,29 @@ static t_list	*get_buff(t_list **bufflst, int fd)
 	return (*bufflst);
 }
 
-static void		read_to_buff(int fd, char **stock)
+static int		read_to_buff(int fd, char **stock)
 {
 	int				rb;
+	int				rbt;
 	char			buff[BUFF_SIZE + 1];
 	char			*tmp;
 
+	rbt = ft_strchr(*stock, '\n') == NULL ? 0 : -1;
 	rb = 1;
-	while (rb > 0 && !ft_strchr(*stock, '\n'))
+	while (rb > 0 && rbt > -1)
 	{
 		rb = read(fd, buff, BUFF_SIZE);
+		rbt += rb;
 		buff[rb] = '\0';
 		tmp = *stock;
 		if (!(*stock = ft_strjoin(*stock, buff)))
 		{
 			free(tmp);
-			return ;
+			return (0);
 		}
 		free(tmp);
-
 	}
+	return (rbt);
 }
 
 int				get_next_line(int fd, char **line)
@@ -67,11 +93,15 @@ int				get_next_line(int fd, char **line)
 
 	retval = 0;
 	nli = 0;
-	if (!line || read(fd, NULL, 0) == -1)
+	if (!line || read(fd, NULL, 0) == -1
+		|| !(buff = get_buff(&buffs, fd)))
 		return (-1);
-	if (!(buff = get_buff(&buffs, fd)))
-		return (-1);
-	read_to_buff(fd, (char**)(&buff->content));
+	if (!read_to_buff(fd, (char**)(&buff->content)))
+	{
+		*line = ft_strnew(0);
+		rm_buff(&buffs, fd);
+		return (0);
+	}
 	while (((char*)(buff->content))[nli]
 			&& ((char*)(buff->content))[nli] != '\n')
 		nli++;
