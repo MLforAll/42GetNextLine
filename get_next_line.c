@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/12/15 16:48:36 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/15 21:55:49 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static void		rm_buff(t_list **bufflst, int fd)
 				(*bufflst) = curr->next;
 			ft_strdel(((char**)&curr->content));
 			free(curr);
+			return ;
 		}
 		prev = curr;
 		curr = curr->next;
@@ -65,9 +66,9 @@ static int		read_to_buff(int fd, char **stock)
 	char			buff[BUFF_SIZE + 1];
 	char			*tmp;
 
-	rbt = ft_strchr(*stock, '\n') == NULL ? 0 : -1;
+	rbt = (ft_strchr(*stock, '\n') == NULL && !ft_strcmp(*stock, "")) ? 0 : 1;
 	rb = 1;
-	while (rb > 0 && (rbt == -1 || !ft_strchr(*stock, '\n')))
+	while (rb > 0 && (rbt == 0 || !ft_strchr(*stock, '\n')))
 	{
 		rb = read(fd, buff, BUFF_SIZE);
 		rbt += rb;
@@ -76,40 +77,40 @@ static int		read_to_buff(int fd, char **stock)
 		if (!(*stock = ft_strjoin(*stock, buff)))
 		{
 			free(tmp);
-			return (0);
+			return (-1);
 		}
 		free(tmp);
 	}
 	return (rbt);
 }
-
+#include <stdio.h>
 int				get_next_line(int fd, char **line)
 {
 	static	t_list	*buffs;
 	t_list			*buff;
-	char			*tmp;
+	void			*tmp;
 	int				retval;
 	int				nli;
 
 	retval = 0;
 	nli = 0;
-	if (!line || read(fd, NULL, 0) == -1
-		|| !(buff = get_buff(&buffs, fd)))
+	if (!line || !(buff = get_buff(&buffs, fd)))
 		return (-1);
-	if (!read_to_buff(fd, (char**)(&buff->content)))
+	if ((retval = read_to_buff(fd, (char**)(&buff->content))) <= 0)
 	{
 		*line = ft_strnew(0);
 		rm_buff(&buffs, fd);
-		return (0);
+		return (retval);
 	}
 	while (((char*)(buff->content))[nli]
 			&& ((char*)(buff->content))[nli] != '\n')
 		nli++;
-	retval = (nli > 0 || ((char*)(buff->content))[nli]);
-	*line = ft_strsub(buff->content, 0, nli);
+	*line = ft_strsub((char*)buff->content, 0, nli);
+	if (((char*)(buff->content))[nli] != '\0')
+		nli++;
 	tmp = buff->content;
-	buff->content = ft_strsub(buff->content, retval ? nli + 1 : nli, \
-			ft_strlen(buff->content));
+	buff->content = ft_strsub((char*)buff->content, nli, \
+			ft_strlen(buff->content) - nli);
 	free(tmp);
-	return (retval);
+	return (1);
 }
