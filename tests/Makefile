@@ -5,27 +5,33 @@
 #                                                     +:+ +:+         +:+      #
 #    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2017/11/13 20:07:31 by kdumarai          #+#    #+#              #
-#    Updated: 2017/12/15 18:33:17 by kdumarai         ###   ########.fr        #
+#    Created: 2017/12/15 18:07:11 by kdumarai          #+#    #+#              #
+#    Updated: 2017/12/15 18:07:17 by kdumarai         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = test_gnl
+NAME = genf
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Werror -Wextra
+
+SRCS = gen_file.c
+
+OBJS = $(SRCS:%.c=%.o)
 
 all: $(NAME)
 
-$(NAME): get_next_line.c get_next_line.h main.c
-	make -C libft
-	clang $(CFLAGS) -I ../Libft -o get_next_line.o -c get_next_line.c -g3
-	clang $(CFLAGS) -I ../Libft -o main.o -c main.c -g3
-	clang -o $(NAME) main.o get_next_line.o -I ../Libft -L ../Libft -lft -g3
+$(NAME): $(OBJS)
+	gcc -o $(NAME) $(OBJS)
+
+%.o: %.c
+	gcc $(CFLAGS) -c $<
 
 clean:
-	rm -rf *.o
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+.PHONY: all clean fclean re
