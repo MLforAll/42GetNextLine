@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/12/16 16:16:10 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/16 16:48:47 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,8 @@ static int		read_to_buff(int fd, char **stock)
 		tmp = *stock;
 		if (!(*stock = ft_strjoin(*stock, buff)))
 		{
-			free(tmp);
+			if (tmp)
+				free(tmp);
 			return (-1);
 		}
 		free(tmp);
