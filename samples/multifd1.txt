@@ -1,0 +1,3 @@
+this a sample file for multifd tests
+it contains multiple lines
+so it won't be a problem
