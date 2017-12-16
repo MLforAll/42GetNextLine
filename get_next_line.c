@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/12/16 17:18:38 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/16 18:09:02 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "get_next_line.h"
 
-static void		rm_buff(t_list **bufflst, int fd)
+static int		rm_buff(t_list **bufflst, int fd)
 {
 	t_list			*curr;
 	t_list			*prev;
@@ -31,11 +31,12 @@ static void		rm_buff(t_list **bufflst, int fd)
 				(*bufflst) = curr->next;
 			ft_strdel(((char**)&curr->content));
 			free(curr);
-			return ;
+			return (1);
 		}
 		prev = curr;
 		curr = curr->next;
 	}
+	return (0);
 }
 
 static t_list	*get_buff(t_list **bufflst, int fd)
@@ -97,14 +98,12 @@ int				get_next_line(int fd, char **line)
 	int				nli;
 
 	nli = 0;
-	*line = NULL;
-	if (!line || !(buff = get_buff(&buffs, fd)) || fd < 0 || BUFF_SIZE <= 0)
+	if (line)
+		*line = NULL;
+	if (!line || fd < 0 || BUFF_SIZE <= 0 || !(buff = get_buff(&buffs, fd)))
 		return (-1);
 	if ((retval = read_to_buff(fd, (char**)(&buff->content))) <= 0)
-	{
-		rm_buff(&buffs, fd);
-		return (retval);
-	}
+		return (rm_buff(&buffs, fd) ? retval : retval);
 	while (((char*)(buff->content))[nli]
 			&& ((char*)(buff->content))[nli] != '\n')
 		nli++;
