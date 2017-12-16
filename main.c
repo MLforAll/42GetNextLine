@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:34:32 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/12/15 03:12:50 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/16 16:18:40 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,12 @@ void	read_files(int *fds, int ac, char *order)
 			ft_putnbr(fd);
 			ft_putchar('\n');
 			ft_putstr("\033[0;39m");
-			if ((!ft_strcmp(result, "exit") && fd == 0) || (order && !*order))
-				quit = 1;
-			ft_strdel(&result);
+			if (result)
+			{
+				if ((fd == 0 && !ft_strcmp(result, "exit")) || (order && !*order))
+					quit = 1;
+				ft_strdel(&result);
+			}
 		}
 		aci++;
 	}

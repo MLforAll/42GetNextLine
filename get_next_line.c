@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 18:43:02 by kdumarai          #+#    #+#             */
-/*   Updated: 2017/12/15 22:18:39 by kdumarai         ###   ########.fr       */
+/*   Updated: 2017/12/16 16:16:10 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ static int		read_to_buff(int fd, char **stock)
 	char			buff[BUFF_SIZE + 1];
 	char			*tmp;
 
+	if (!stock || !*stock)
+		return (-1);
 	rbt = (ft_strchr(*stock, '\n') == NULL && !ft_strcmp(*stock, "")) ? 0 : 1;
 	rb = 1;
 	while (rb > 0 && (rbt == 0 || !ft_strchr(*stock, '\n')))
@@ -93,11 +95,11 @@ int				get_next_line(int fd, char **line)
 	int				nli;
 
 	nli = 0;
-	if (!line || !(buff = get_buff(&buffs, fd)))
+	*line = NULL;
+	if (!line || !(buff = get_buff(&buffs, fd)) || fd < 0 || BUFF_SIZE <= 0)
 		return (-1);
 	if ((retval = read_to_buff(fd, (char**)(&buff->content))) <= 0)
 	{
-		*line = ft_strnew(0);
 		rm_buff(&buffs, fd);
 		return (retval);
 	}
